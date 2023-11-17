@@ -11,7 +11,7 @@
     "res:build": "rescript",
     "res:clean": "rescript clean",
     "res:dev": "rescript build -w",
-    "start:dev": "yarn res:dev & docker-compose watch"
+    "start": "yarn res:dev && docker-compose watch"
   },
   "workspaces": [
     "packages/*"
