@@ -1,21 +1,16 @@
 {
-  "name": "rescript-country-selector",
+  "name": "client",
   "version": "0.0.1",
   "keywords": [
     "rescript"
   ],
   "license": "MIT",
   "author": "",
-  "private": true,
   "scripts": {
     "res:build": "rescript",
     "res:clean": "rescript clean",
-    "res:dev": "rescript build -w",
-    "start:dev": "yarn res:dev & docker-compose watch"
+    "res:dev": "rescript build -w"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
     "@rescript/core": "^0.6.0",
     "rescript": "^10.1.4"

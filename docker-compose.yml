@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  client:
+    build: ./packages/client
+    ports:
+      - "3000:80"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./packages/client/bsconfig.json
+        - action: rebuild
+          path: ./packages/client/package.json
+        - action: sync
+          path: ./packages/client/src
+          target: /usr/share/nginx/html
+        - action: sync
+          path: ./packages/client/static
+          target: /usr/share/nginx/html
