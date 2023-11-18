@@ -1,23 +1,22 @@
-# ReScript Project Template
+# Rescript Country Selector
 
-The only official ReScript starter template. Clone this repo to get started.
-
-This is the branch where you can use your output code in NodeJS. To use your output in the browser, do `git checkout -b browser origin/browser` to switch to the `browser` branch.
-
-## Installation
-
-```sh
-npm install
-```
+Experimental project with a country selector made with Rescript without any expernal bindings.
 
 ## Build
 
-- Build: `npm run res:build`
-- Clean: `npm run res:clean`
-- Build & watch: `npm run res:dev`
-
-## Run
+This project uses `docker` and `docker compose` to build and run
 
 ```sh
-node src/Demo.bs.js
+docker compose build
+```
+
+## Development
+```sh 
+docker compose watch
+```
+
+## Production Build
+
+```sh
+docker compose -f docker-compose.prod.yml up -d
 ```
