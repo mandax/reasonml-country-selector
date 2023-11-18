@@ -1,1 +1,1 @@
-Console.log("Hello World Mandax!")
+Console.log("Hello World!")
