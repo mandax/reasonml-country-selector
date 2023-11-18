@@ -18,6 +18,6 @@ FROM node:20.9.0-alpine3.18 as server
 RUN mkdir /server
 RUN npm install -g http-server
 COPY static/* /server
-COPY --from=build /build/lib/es6/src/* /server
+COPY --from=build /build/lib/js/* /server
 EXPOSE 80
 CMD ["http-server", "-c-1", "-p80", "/server"]

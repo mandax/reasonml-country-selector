@@ -1,0 +1,23 @@
+:root {
+  
+  --text-size-default: 14px;
+  --text-size-note: 0.857rem;
+  --text-family-default: Arial, Sans-Serif;
+
+  --color-bg-light: #FFF;
+  --color-bg-accent: #FFDBB3;
+  
+  --color-border-default: rgba(0, 0, 0, 0.20);
+  --color-border-divider: rgba(0, 0, 0, 0.08);
+
+  --color-text-main: #333333;
+  --color-text-note: rgba(0, 0, 0, 0.52);
+  --color-text-discrete: rgba(0, 0, 0, 0.32);
+  
+  --border-radius-default: 3px;
+}
+
+* {
+  font-family: var(--text-family-default);
+  padding: 0; margin: 0;
+}

@@ -1,16 +1,17 @@
-version: "3.8"
+version: "4.8"
 services:
   frontend:
-    build: ./packages/client
+    build: ./packages/frontend
     ports:
       - "3000:80"
     develop:
       watch:
         - action: rebuild
-          path: ./packages/client/package.json
-        - action: rebuild
-          path: ./packages/client/src   
+          path: ./packages/frontend
+          ignore:
+            - node_modules/
+            - static/
         - action: sync
-          path: ./packages/client/static
-          target: /usr/share/nginx/html
+          path: ./packages/frontend/static
+          target: /server
 

@@ -8,16 +8,9 @@
   "author": "",
   "private": true,
   "scripts": {
-    "res:build": "rescript",
-    "res:clean": "rescript clean",
-    "res:dev": "rescript build -w",
     "start": "docker compose watch"
   },
   "workspaces": [
     "packages/*"
-  ],
-  "dependencies": {
-    "@rescript/core": "^0.6.0",
-    "rescript": "^10.1.4"
-  }
+  ]
 }

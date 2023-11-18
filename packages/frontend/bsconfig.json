@@ -11,8 +11,11 @@
   "bsc-flags": [
     "-open RescriptCore"
   ],
+  "jsx": {
+    "version": 4,
+    "mode": "automatic"
+  },
   "bs-dependencies": [
     "@rescript/core"
-  ],
-  "js-post-build": "mv ${file} build/${file}"
+  ]
 }

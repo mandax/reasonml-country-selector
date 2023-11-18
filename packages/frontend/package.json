@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "version": "0.0.1",
+  "keywords": [
+    "rescript"
+  ],
+  "license": "MIT",
+  "author": "",
+  "scripts": {
+    "pack:build": "esbuild lib/es6/src/App.bs.js --outfile=lib/js/app.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16",
+    "res:build": "rescript build -with-deps && yarn pack:build",
+    "res:clean": "rescript clean",
+    "res:dev": "rescript build -w"
+  },
+  "dependencies": {
+    "@rescript/core": "^0.6.0",
+    "esbuild": "^0.19.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rescript": "^10.1.4"
+  }
+}
