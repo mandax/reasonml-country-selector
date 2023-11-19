@@ -1,8 +1,3 @@
-// module SelectContext = {
-//   let context = React.createContext({ onChange: None })
-//   let make = React.Context.provider(context)
-// }
-
 module Option = {
   type t<'any> = {
     label: string, 
@@ -26,7 +21,6 @@ module Option = {
     </li>
   }
 }
-
 
 @react.component
 let make = (
