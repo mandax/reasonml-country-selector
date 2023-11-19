@@ -8,7 +8,7 @@
   "author": "",
   "scripts": {
     "pack:build": "esbuild lib/es6/src/App.bs.js --outfile=lib/js/app.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16",
-    "res:build": "rescript build -with-deps && yarn pack:build",
+    "res:build": "rescript build && yarn pack:build",
     "res:clean": "rescript clean",
     "res:dev": "rescript build -w"
   },

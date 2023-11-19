@@ -15,28 +15,31 @@ module Option = {
   }
 }
 
-
 @react.component
 let make = (
   ~onChange: Option.t<'a> => unit, 
-  ~selected: Option.t<'a>=?,
-  ~placeholder: string=?,
+  ~selected: option<Option.t<'a>>=?,
+  ~placeholder: option<string>=?,
   ~options: array<Option.t<'a>>,
   ~prependChildren=?, 
   ~appendChildren=?,
   ()) => {
 
+  let (isOpen, setOpen) = React.useState(false)
   let onSelectOption = (option, _) => onChange(option)
+  let toggleDropdown = _ => setOpen(!isOpen)
+  let dropdownElement = React.useRef(Js.Nullable.null)
+  
   let renderOption = opt => <Option key={opt.id} option={opt} onSelect={onSelectOption} />
 
   <div className="select">
-    <button className="selected">
+    <button onClick={toggleDropdown} className="select__selector">
       {switch selected {
         | None => placeholder->Belt.Option.getWithDefault("Select")
         | Some(opt) => opt.label
       }->React.string}
     </button>
-    <div className="dropdown">
+    <div ref={dropdownElement} className={`select__dropdown ${isOpen ? "" : "select__dropdown--close"}`}>
       {prependChildren->Belt.Option.getWithDefault(React.null)}
       <ul>
         {options->Array.map(renderOption)->React.array}

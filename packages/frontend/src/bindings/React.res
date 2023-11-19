@@ -7,6 +7,19 @@ external array: array<element> => element = "%identity"
 @module("react")
 type make<'props> = 'props => element
 
+@module("react") 
+@val external useEffect2: (unit => option<unit => unit>, ('a, 'b)) => unit = "useEffect"
+
+@module("react")
+@val external useState: 'any => ('any, 'any => unit) = "useState"
+
+@module("react")
+@val external useRef: Js.Nullable.t<Document.element> => JsxDOM.domRef  = "useRef" 
+
+module Ref = {
+  @get external current: JsxDOM.domRef => Document.element = "current" 
+}
+
 @module("react/jsx-runtime")
 external jsx: (make<'props>, 'props) => element = "jsx"
 
