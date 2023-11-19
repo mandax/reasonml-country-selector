@@ -5,18 +5,25 @@ module Content = {
   
     let onChange = val => Js.log(val)
     let options: array<Select.Option.t<string>> = [
-      { id: "1", label: "opt1", value: "any" },
-      { id: "2", label: "opt2", value: "any" },
-      { id: "3", label: "opt3", value: "any" },
-      { id: "4", label: "opt4", value: "any" },
-      { id: "5", label: "opt5", value: "any" },
-      { id: "6", label: "opt6", value: "any" },
-      { id: "7", label: "opt7", value: "any" },
+      { label: "opt1", value: "any" },
+      { label: "opt2", value: "any" },
+      { label: "opt3", value: "any" },
+      { label: "opt4", value: "any" },
+      { label: "opt5", value: "any" },
+      { label: "opt6", value: "any" },
+      { label: "opt7", value: "any" },
     ] 
+
+    module Template = {
+      let make = ({label}: Select.Option.templateProps) => 
+        <span>
+          {`alou teste ${label}`->React.string}
+        </span>
+    }
 
     <main>
       <h1>{"Rescript Country Selector"->React.string}</h1> 
-      <Select placeholder="Select a country" onChange options />
+      <Select placeholder="Select a country" optionTemplate={Template.make} onChange options />
     </main>
   }
 }
