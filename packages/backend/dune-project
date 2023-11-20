@@ -1,0 +1,26 @@
+(lang dune 3.11)
+
+(name backend)
+
+(generate_opam_files true)
+
+(source
+ (github mandax/rescript-country-selector))
+
+(authors "Anderson Pinto (mandax)")
+
+(maintainers "anderson@afp.sh")
+
+(license MIT)
+
+(package
+ (name backend)
+ (synopsis "A quick REST server to return countries")
+ (description "This is a REST server to return countries for the frontend CountrySelect component")
+ (depends 
+   ocaml 
+   dune 
+   (opium (= 0.20.0))
+   )
+ )
+ 
