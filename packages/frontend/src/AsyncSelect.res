@@ -1,4 +1,4 @@
 @react.component
 let make = () => {
-  <div></div>
+  <Select placeholder="Select a country" optionTemplate={Template.make} onChange options />
 }
