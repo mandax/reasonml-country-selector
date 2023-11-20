@@ -9,6 +9,7 @@ COPY ./test $HOME/build/test
 RUN opam install $HOME/build/. --deps-only -y -v
 # NOTE: for some reason opam is not installing dependencies correctly, 
 #       for the sake of getting this running, let's install manually
+# TODO: opam dependencies are not cached causing bad experience with compose watch
 RUN opam install dune -y
 RUN opam install opium -y
 RUN eval $(opam env)
@@ -22,7 +23,7 @@ RUN opam exec -- dune install
 # Runtime
 FROM build as server
 RUN mkdir $HOME/server
-WORKDIR /server
+WORKDIR $HOME/server
 COPY ./countries.json $HOME/server/countries.json
 EXPOSE 4000
 CMD ["backend", "-p", "4000"]
