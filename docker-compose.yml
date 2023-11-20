@@ -1,5 +1,15 @@
-version: "4.8"
+version: "3.8"
 services:
+  backend:
+    build: ./packages/backend
+    ports:
+      - "4000:4000"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./packages/backend
+          ignore:
+            - _build
   frontend:
     build: ./packages/frontend
     ports:
