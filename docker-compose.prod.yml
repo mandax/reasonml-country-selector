@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  backend:
+    image: mandax/rescript-country-selector-backend:latest
+    ports:
+      - "4000:4000"
+  frontend:
+    image: mandax/rescript-country-selector-frontend:latest
+    ports:
+      - "3000:80"
+
