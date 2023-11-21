@@ -7,7 +7,7 @@
   "license": "MIT",
   "author": "",
   "scripts": {
-    "pack:build": "esbuild lib/es6/src/App.bs.js --outfile=lib/js/app.js --bundle --sourcemap --target=chrome58,firefox57,safari11,edge16",
+    "pack:build": "node build.js",
     "res:build": "rescript build && yarn pack:build",
     "res:clean": "rescript clean",
     "res:dev": "rescript build -w"
@@ -17,6 +17,7 @@
     "esbuild": "^0.19.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-use": "^17.4.0",
     "rescript": "^10.1.4"
   }
 }
