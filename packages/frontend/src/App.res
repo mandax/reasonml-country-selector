@@ -5,7 +5,7 @@ module Content = {
 
     <main>
       <h1> {"Rescript Country Selector"->React.string} </h1>
-      <CountrySelect country={Some("us")} onChange={c => Js.log(c)} />
+      <CountrySelect country={Some("us")} onChange />
     </main>
   }
 }

@@ -57,7 +57,18 @@ let format_error str exn =
 let highest_rank : Countries.country -> Countries.country -> int =
  fun a b -> compare (int_of_float b.rank) (int_of_float a.rank)
 
-let highest_rank_countries req =
+let country_by_code_handler req =
+  try
+    let country_code = Router.param req "countryCode" in
+    Lwt.return
+      (Response.of_json
+         (Countries.yojson_of_country
+            (Countries.countries
+            |> List.find (fun (c : Countries.country) -> c.value = country_code)
+            )))
+  with exn -> format_error "" exn
+
+let highest_rank_countries_handler req =
   try
     let limit = Router.param req "limit" |> int_of_string in
     Lwt.return
@@ -78,6 +89,9 @@ let search_countries_handler req =
 
 let _ =
   App.empty
-  |> App.get "/countries/:limit" highest_rank_countries
+  |> App.middleware
+       (Middleware.allow_cors ~origins:[ "http://localhost:3000"; "http://ahrefs.afp.sh" ] ())
+  |> App.get "/country/:countryCode" country_by_code_handler
+  |> App.get "/countries/:limit" highest_rank_countries_handler
   |> App.get "/countries/search/:t" search_countries_handler
   |> App.run_command
