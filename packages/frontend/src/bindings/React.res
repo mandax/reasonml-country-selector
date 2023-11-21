@@ -78,11 +78,19 @@ module Ref = {
   @get external current: JsxDOM.domRef => Document.element = "current"
 }
 
+module Form = {
+  @scope("target") @get external getTargetValue: JsxEvent.Form.t => string = "value"
+}
+
 @module("react/jsx-runtime")
 external jsx: (make<'props>, 'props) => element = "jsx"
 
 @module("react/jsx-runtime")
 external jsxs: (make<'props>, 'props) => element = "jsxs"
+
+type fragmentProps = {children: array<element>}
+@module("react/jsx-runtime")
+external jsxFragment: component<fragmentProps> = "Fragment"
 
 @module("react/jsx-runtime")
 external jsxKeyed: (make<'props>, 'props, ~key: string, @ignore unit) => element = "jsxs"

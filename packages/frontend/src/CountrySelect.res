@@ -10,6 +10,13 @@ module Api = {
 module Async = {
   type t<'a> = Loading | Ok('a) | Empty
 
+  let toString = (data: t<'a>) =>
+    switch data {
+    | Loading => "Loading"
+    | Ok(_) => "Ok"
+    | Empty => "Empty"
+    }
+
   let someWithDefault = (a: t<'a>, def: 'a) =>
     switch a {
     | Ok(val) => val
@@ -25,15 +32,21 @@ module Async = {
 
 module State = {
   type countryCode = string
+  type countries = Async.t<array<Select.Option.t<Api.country>>>
+  type selectedCountry = Async.t<Select.Option.t<Api.country>>
+  
   type action =
-    | FetchCountries
+    | FetchCountries(int)
     | FetchCountry(countryCode)
+    | SearchCountries(string)
     | SetSelectedCountry(Async.t<Api.country>)
     | SetCountries(Async.t<Api.countries>)
-  type effect = FetchingCountries | FetchingCountry(string)
-  type state = {
-    selectedCountry: Async.t<Select.Option.t<Api.country>>,
-    countries: Async.t<array<Select.Option.t<Api.country>>>,
+  
+    type effect = FetchingCountries(int) | FetchingCountry(string) | SearchingCountries(string)
+
+  type t = {
+    selectedCountry: selectedCountry,
+    countries: countries,
   }
 
   let initState = {countries: Empty, selectedCountry: Empty}
@@ -41,9 +54,15 @@ module State = {
   let reducerEffect = (_state, effect, dispatch) => {
     open Fetch
     switch effect {
-    | FetchingCountries => {
+    | SearchingCountries(startsWith) => {
         dispatch(SetCountries(Async.Loading))
-        fetch("http://localhost:4000/countries/10", Request.make(~method=#GET))
+        fetch(`http://localhost:4000/countries/search/${startsWith}`, Request.make(~method=#GET))
+        ->thenResolve(res => res->Response.getBody)
+        ->then((body: Api.countries) => dispatch(SetCountries(Async.Ok(body))))
+      }
+    | FetchingCountries(count) => {
+        dispatch(SetCountries(Async.Loading))
+        fetch(`http://localhost:4000/countries/${count->Int.toString}`, Request.make(~method=#GET))
         ->thenResolve(res => res->Response.getBody)
         ->then((body: Api.countries) => dispatch(SetCountries(Async.Ok(body))))
       }
@@ -56,10 +75,11 @@ module State = {
     }
   }
 
-  let reducer = (pushEffects, state, action) =>
+  let reducer = (pushEffects, state, action): t =>
     switch action {
-    | FetchCountries => state->pushEffects(list{FetchingCountries})
+    | FetchCountries(count) => state->pushEffects(list{FetchingCountries(count)})
     | FetchCountry(countryCode) => state->pushEffects(list{FetchingCountry(countryCode)})
+    | SearchCountries(startsWith) => state->pushEffects(list{SearchingCountries(startsWith)})
     | SetSelectedCountry(Async.Ok(country)) => {
         ...state,
         selectedCountry: Async.Ok({label: country.label, value: country}),
@@ -81,13 +101,23 @@ module State = {
 }
 
 module Country = {
+  let getCode = (country: State.selectedCountry) =>
+    switch country {
+    | Ok({value: {value: countryCode}}) => countryCode
+    | _ => ""
+    }
+
   let make = (
     {selected, option: {label, value: country}}: Select.Option.templateProps<Api.country>,
   ) =>
-    <span className="country">
-      <span className={`fi fi-${country.value}`} />
-      <span> {label->React.string} </span>
-      {selected ? React.null : <span> {`${country.rank->Float.toString}K`->React.string} </span>}
+    <span className={`${selected ? "selected" : ""} countrySelect`}>
+      <span className={`countrySelect__icon fi fi-${country.value}`} />
+      <span className="countrySelect__label"> {label->React.string} </span>
+      {selected
+        ? React.null
+        : <span className="countrySelect__badge">
+            {`${country.rank->Float.toString}K`->React.string}
+          </span>}
     </span>
 }
 
@@ -108,6 +138,7 @@ module AsyncSelect = {
   let make = (
     ~optionTemplate=?,
     ~onChange,
+    ~onTypeSearch=?,
     ~placeholder=?,
     ~selected: Async.t<Select.Option.t<'a>>,
     ~options: asyncOptions<'a>,
@@ -117,10 +148,41 @@ module AsyncSelect = {
       ?optionTemplate
       selected={selected->Async.toOption}
       onChange
-      prependChildren={<Loading asyncOptions={options} />}
+      prependChildren={<>
+        {switch onTypeSearch {
+        | Some(onTypeSearch) =>
+          <div className="search">
+            <IconSearch />
+            <input type_="text" onChange={onTypeSearch} placeholder="Search" />
+          </div>
+        | None => React.null
+        }}
+        <Loading asyncOptions={options} />
+      </>}
       options={options->Async.someWithDefault([])}
     />
   }
+}
+
+let useSelectedCountry = (state: State.t, dispatch, country) => {
+  React.useEffect(() => {
+    switch country {
+    | Some(countryCode) =>
+      if countryCode != state.selectedCountry->Country.getCode {
+        dispatch(State.FetchCountry(countryCode))
+      }
+    | _ => ()
+    }
+  }, [country])
+}
+
+let useCountriesInitialLoad = (state: State.t, dispatch) => {
+  React.useEffect(() => {
+    switch state.countries {
+    | Empty => dispatch(State.FetchCountries(10))
+    | _ => ()
+    }
+  }, [state.countries])
 }
 
 @react.component
@@ -131,18 +193,17 @@ let make = (~onChange, ~country: option<State.countryCode>) => {
     State.initState,
   )
 
-  React.useEffect(() => {
-    switch country {
-    | Some(countryCode) => dispatch(FetchCountry(countryCode))
-    | _ => ()
-    }
-  }, [])
+  useSelectedCountry(state, dispatch, country)
+  useCountriesInitialLoad(state, dispatch)
+
+  let onTypeSearch = (event) => dispatch(SearchCountries(event->React.Form.getTargetValue))
 
   <AsyncSelect
     selected={state.selectedCountry}
     placeholder="Select a country"
     optionTemplate={Country.make}
     onChange
+    onTypeSearch
     options={state.countries}
   />
 }
