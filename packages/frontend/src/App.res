@@ -15,20 +15,24 @@ module Content = {
       {label: "option 8", value: "opt8"},
     ]
 
-    <main>
-      <div>
+    <KeyboardControl>
+      <main>
         <div>
-          <h1> {"Simple Selector"->React.string} </h1>
-          <Select options onChange={opt => setSimpleSelected(Some(opt))} selected=?{simpleSelected} />
+          <div>
+            <h1> {"Simple Selector"->React.string} </h1>
+            <Select
+              options onChange={opt => setSimpleSelected(opt)} selected={simpleSelected}
+            />
+          </div>
         </div>
-      </div>
-      <div>
         <div>
-          <h1> {"Rescript Country Selector"->React.string} </h1>
-          <CountrySelect country={Some("us")} onChange />
+          <div>
+            <h1> {"Rescript Country Selector"->React.string} </h1>
+            <CountrySelect country={Some("us")} onChange />
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </KeyboardControl>
   }
 }
 

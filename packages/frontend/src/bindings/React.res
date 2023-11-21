@@ -8,12 +8,34 @@ external array: array<element> => element = "%identity"
 type make<'props> = 'props => element
 type component<'props> = Jsx.component<'props>
 
-@module("react") @val
-external useEffect2: (unit => option<unit => unit>, ('a, 'b)) => unit = "useEffect"
-
 @module("react") @val external useState: 'any => ('any, 'any => unit) = "useState"
 
-@module("react") @val external useRef: Js.Nullable.t<Document.element> => JsxDOM.domRef = "useRef"
+@module("react") @val external useId: unit => string = "useId"
+
+module Ref = {
+  type t<'any> = {mutable current: 'any}
+
+  @module("react") @val external useRef: 'any => t<'any> = "useRef"
+
+  external toDomRef: t<'any> => JsxDOM.domRef = "%identity"
+
+  let useContainsActiveRef = (ref: t<'a>) => {
+    switch ref.current->Js.Nullable.toOption {
+    | None => false
+    | Some(element: Document.element) => element->Document.Element.contains(Document.activeElement)
+    }
+  }
+
+  let useActiveRef = (ref: t<'a>) => {
+    switch ref.current->Js.Nullable.toOption {
+    | None => false
+    | Some(element: Document.element) => element == Document.activeElement
+    }
+  }
+  let useRefElement = (ref: t<'a>): option<Document.element> => {
+    ref.current->Js.Nullable.toOption
+  }
+}
 
 let option = (element: option<element>): element =>
   switch element {
@@ -28,12 +50,20 @@ type dispatch<'action> = 'action => unit
 external useReducer: (reducer<'state, 'action>, 'state) => ('state, dispatch<'action>) =
   "useReducer"
 
-@module("react") @variadric
-external useEvent: (array<'any> => unit) => unit = "useEvent"
+@module("react")
+external useMemo: ('any => unit, _, 'any) => unit = "useMemo"
 
 @module("react")
 external // TODO(@mandax): Can break in runtime, research how to better handle useEffect dependencies
 useEffect: (unit => unit, _) => unit = "useEffect"
+
+@module("react")
+external useEffectWithUnmount: ((unit, unit) => unit, _) => unit = "useEffect"
+
+module Children = {
+  @module("react") @scope("Children")
+  external each: (element, (Document.element, string) => unit) => unit = "forEach"
+}
 
 // TODO(@mandax): Improve this with a functor
 module SideEffect = {
@@ -72,10 +102,6 @@ module SideEffect = {
     }, (internalState.effects, state, dispatch))
     (state, dispatch)
   }
-}
-
-module Ref = {
-  @get external current: JsxDOM.domRef => Document.element = "current"
 }
 
 module Form = {

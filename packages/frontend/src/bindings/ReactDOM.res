@@ -1,10 +1,13 @@
 module Container = {
-  type t 
+  type t
   @send external render: (t, React.element) => unit = "render"
 }
 
+@module("react-dom") @as("ReactDOM")
+external findDOMNode: string => Document.element = "findDOMNode"
+
 @module("react-dom/client")
-external createRoot: (Document.element) => Container.t = "createRoot"
+external createRoot: Document.element => Container.t = "createRoot"
 
 external someElement: React.element => option<React.element> = "%identity"
 

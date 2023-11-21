@@ -10,27 +10,34 @@ module Loading = {
     }
 }
 
+module Search = {
+  @react.component
+  let make = (~onChange) => {
+    let id = React.useId()
+    <div className="search">
+      <IconSearch />
+      <input id={id} type_="text" onChange placeholder="Search" />
+    </div>
+  }
+}
+
 @react.component
 let make = (
   ~optionTemplate=?,
   ~onChange,
   ~onTypeSearch=?,
   ~placeholder=?,
-  ~selected=?,
+  ~selected,
   ~options: asyncOptions<'a>,
 ) => {
   <Select
     ?placeholder
     ?optionTemplate
-    ?selected
+    selected
     onChange
     prependChildren={<>
       {switch onTypeSearch {
-      | Some(onTypeSearch) =>
-        <div className="search">
-          <IconSearch />
-          <input type_="text" onChange={onTypeSearch} placeholder="Search" />
-        </div>
+      | Some(onTypeSearch) => <Search onChange={onTypeSearch} />
       | None => React.null
       }}
       <Loading asyncOptions={options} />

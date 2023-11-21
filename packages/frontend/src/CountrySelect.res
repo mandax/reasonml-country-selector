@@ -17,6 +17,8 @@ module State = {
     countries: countries,
   }
 
+  Js.log(Env.apiUrl)
+
   let initState = {countries: Empty, selectedCountry: Empty}
 
   let reducerEffect = (_state, effect, dispatch) => {
@@ -127,13 +129,18 @@ let make = (~onChange, ~country: option<State.countryCode>) => {
     | value => dispatch(SearchCountries(value))
     }
 
-  let onChangeHandler = (option: Select.Option.t<Api.country>) => {
-    dispatch(SetSelectedCountry(Ok(option.value)))
-    onChange(option.value)
+  let onChangeHandler = (option: option<Select.Option.t<Api.country>>) => {
+    switch option {
+    | Some(opt) => {
+        dispatch(SetSelectedCountry(Ok(opt.value)))
+        onChange(opt.value)
+      }
+    | None => dispatch(SetSelectedCountry(Empty))
+    }
   }
 
   <AsyncSelect
-    selected=?{state.selectedCountry->Async.toOption}
+    selected={state.selectedCountry->Async.toOption}
     placeholder="Select a country"
     optionTemplate={Country.make}
     onChange={onChangeHandler}
