@@ -10,7 +10,7 @@ RUN yarn install
 # Build
 FROM cache as build 
 WORKDIR /build
-ENV API_URL='$API_URL'
+ENV API_URL='"http://localhost:4000"'
 COPY src /build/src
 COPY build.js /build/build.js
 RUN yarn res:build

@@ -17,30 +17,27 @@ module State = {
     countries: countries,
   }
 
-  Js.log(Env.apiUrl)
-
   let initState = {countries: Empty, selectedCountry: Empty}
 
   let reducerEffect = (_state, effect, dispatch) => {
-    open Fetch
     switch effect {
     | SearchingCountries(startsWith) => {
         dispatch(SetCountries(Async.Loading))
-        fetch(`http://localhost:4000/countries/search/${startsWith}`, Request.make(~method=#GET))
-        ->thenResolve(res => res->Response.getBody)
-        ->then((body: Api.countries) => dispatch(SetCountries(Async.Ok(body))))
+        Api.countriesSearch(startsWith)->Fetch.then((res: Api.countries) =>
+          dispatch(SetCountries(Async.Ok(res)))
+        )
       }
     | FetchingCountries(count) => {
         dispatch(SetCountries(Async.Loading))
-        fetch(`http://localhost:4000/countries/${count->Int.toString}`, Request.make(~method=#GET))
-        ->thenResolve(res => res->Response.getBody)
-        ->then((body: Api.countries) => dispatch(SetCountries(Async.Ok(body))))
+        Api.countriesList(count)->Fetch.then((res: Api.countries) =>
+          dispatch(SetCountries(Async.Ok(res)))
+        )
       }
     | FetchingCountry(countryCode) => {
         dispatch(SetSelectedCountry(Async.Loading))
-        fetch(`http://localhost:4000/country/${countryCode}`, Request.make(~method=#GET))
-        ->thenResolve(res => res->Response.getBody)
-        ->then((body: Api.country) => dispatch(SetSelectedCountry(Async.Ok(body))))
+        Api.country(countryCode)->Fetch.then((res: Api.country) =>
+          dispatch(SetSelectedCountry(Async.Ok(res)))
+        )
       }
     }
   }
@@ -56,6 +53,7 @@ module State = {
       }
     | SetCountries(Async.Ok(countries)) => {
         ...state,
+        // TODO(@mandax): Keep countries in state and filter in the ui, lazy loading new countries
         countries: Async.Ok(
           countries->Array.map((c: Api.country): Select.Option.t<Api.country> => {
             label: c.label,
