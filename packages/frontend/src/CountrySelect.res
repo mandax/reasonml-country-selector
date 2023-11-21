@@ -34,15 +34,15 @@ module State = {
   type countryCode = string
   type countries = Async.t<array<Select.Option.t<Api.country>>>
   type selectedCountry = Async.t<Select.Option.t<Api.country>>
-  
+
   type action =
     | FetchCountries(int)
     | FetchCountry(countryCode)
     | SearchCountries(string)
     | SetSelectedCountry(Async.t<Api.country>)
     | SetCountries(Async.t<Api.countries>)
-  
-    type effect = FetchingCountries(int) | FetchingCountry(string) | SearchingCountries(string)
+
+  type effect = FetchingCountries(int) | FetchingCountry(string) | SearchingCountries(string)
 
   type t = {
     selectedCountry: selectedCountry,
@@ -128,7 +128,7 @@ module AsyncSelect = {
     @react.component
     let make = (~asyncOptions: asyncOptions<'a>) =>
       switch asyncOptions {
-      | Loading => React.string("Loading")
+      | Loading => <div className="progress-bar" />
       | Empty
       | Ok(_) => React.null
       }
@@ -196,7 +196,11 @@ let make = (~onChange, ~country: option<State.countryCode>) => {
   useSelectedCountry(state, dispatch, country)
   useCountriesInitialLoad(state, dispatch)
 
-  let onTypeSearch = (event) => dispatch(SearchCountries(event->React.Form.getTargetValue))
+  let onTypeSearch = event =>
+    switch event->React.Form.getTargetValue {
+    | "" => dispatch(SetCountries(Empty))
+    | value => dispatch(SearchCountries(value))
+    }
 
   <AsyncSelect
     selected={state.selectedCountry}
