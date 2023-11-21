@@ -202,11 +202,16 @@ let make = (~onChange, ~country: option<State.countryCode>) => {
     | value => dispatch(SearchCountries(value))
     }
 
+  let onChangeHandler = (option: Select.Option.t<Api.country>) => {
+    dispatch(SetSelectedCountry(Ok(option.value)))
+    onChange(option.value)
+  }
+
   <AsyncSelect
     selected={state.selectedCountry}
     placeholder="Select a country"
     optionTemplate={Country.make}
-    onChange
+    onChange={onChangeHandler}
     onTypeSearch
     options={state.countries}
   />
