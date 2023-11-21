@@ -1,3 +1,6 @@
+# Check out live
+This project is live in [Here](http://ahrefs.afp.sh)
+
 # Rescript Country Selector
 
 The goal with this project is to implement country selector component in rescript, writing the bindings as we go, considering the interface:
