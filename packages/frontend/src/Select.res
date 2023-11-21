@@ -30,7 +30,7 @@ module Option = {
 @react.component
 let make = (
   ~onChange: Option.t<'a> => unit,
-  ~selected: option<Option.t<'a>>,
+  ~selected: option<Option.t<'a>>=?,
   ~placeholder: option<string>=?,
   ~options: array<Option.t<'a>>,
   ~optionTemplate: option<React.component<Option.templateProps<'a>>>=?,
@@ -39,7 +39,10 @@ let make = (
   (),
 ) => {
   let (isOpen, setOpen) = React.useState(false)
-  let onSelectOption = (option, _) => onChange(option)
+  let onSelectOption = (option, _) => {
+    onChange(option)
+    setOpen(false)
+  }
   let toggleDropdown = _ => setOpen(!isOpen)
   let dropdownElement = React.useRef(Js.Nullable.null)
 

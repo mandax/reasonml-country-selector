@@ -1,35 +1,3 @@
-module Api = {
-  type country = {
-    label: string,
-    value: string,
-    rank: float,
-  }
-  type countries = array<country>
-}
-
-module Async = {
-  type t<'a> = Loading | Ok('a) | Empty
-
-  let toString = (data: t<'a>) =>
-    switch data {
-    | Loading => "Loading"
-    | Ok(_) => "Ok"
-    | Empty => "Empty"
-    }
-
-  let someWithDefault = (a: t<'a>, def: 'a) =>
-    switch a {
-    | Ok(val) => val
-    | _ => def
-    }
-
-  let toOption = (opt: t<'a>): option<'a> =>
-    switch opt {
-    | Ok(val) => Some(val)
-    | _ => None
-    }
-}
-
 module State = {
   type countryCode = string
   type countries = Async.t<array<Select.Option.t<Api.country>>>
@@ -121,49 +89,6 @@ module Country = {
     </span>
 }
 
-module AsyncSelect = {
-  type asyncOptions<'a> = Async.t<array<Select.Option.t<'a>>>
-
-  module Loading = {
-    @react.component
-    let make = (~asyncOptions: asyncOptions<'a>) =>
-      switch asyncOptions {
-      | Loading => <div className="progress-bar" />
-      | Empty
-      | Ok(_) => React.null
-      }
-  }
-
-  @react.component
-  let make = (
-    ~optionTemplate=?,
-    ~onChange,
-    ~onTypeSearch=?,
-    ~placeholder=?,
-    ~selected: Async.t<Select.Option.t<'a>>,
-    ~options: asyncOptions<'a>,
-  ) => {
-    <Select
-      ?placeholder
-      ?optionTemplate
-      selected={selected->Async.toOption}
-      onChange
-      prependChildren={<>
-        {switch onTypeSearch {
-        | Some(onTypeSearch) =>
-          <div className="search">
-            <IconSearch />
-            <input type_="text" onChange={onTypeSearch} placeholder="Search" />
-          </div>
-        | None => React.null
-        }}
-        <Loading asyncOptions={options} />
-      </>}
-      options={options->Async.someWithDefault([])}
-    />
-  }
-}
-
 let useSelectedCountry = (state: State.t, dispatch, country) => {
   React.useEffect(() => {
     switch country {
@@ -208,7 +133,7 @@ let make = (~onChange, ~country: option<State.countryCode>) => {
   }
 
   <AsyncSelect
-    selected={state.selectedCountry}
+    selected=?{state.selectedCountry->Async.toOption}
     placeholder="Select a country"
     optionTemplate={Country.make}
     onChange={onChangeHandler}
