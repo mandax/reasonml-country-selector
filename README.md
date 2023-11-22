@@ -29,6 +29,18 @@ I decided to try ocaml for the first time here implementing a simple Api server 
 
 The most recent Docker Compose release has a feature called `watch` that I tested in this project, so make sure to have the latest Docker version isntalled to run this project in development mode.
 
+## Running
+You can run the project without clonning the repo:
+
+**Frontend**
+```
+docker run -p 3000:80 mandax/rescript-country-selector-frontend
+```
+**Backend**
+```
+docker run -p 4000:4000 mandax/rescript-country-selector-backend
+```
+
 
 ## Build
 
@@ -49,7 +61,7 @@ docker compose -f docker-compose.prod.yml build -d
 docker compose watch
 ```
 
-## Running 
+## Running without watch
 Local
 ```sh
 docker compose up -d
